@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface GrandmasterData {
   players: string[];
@@ -8,6 +9,7 @@ export default function HomePage() {
   const [grandmasters, setGrandmasters] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGrandmasters = async () => {
@@ -24,7 +26,7 @@ export default function HomePage() {
         setError(null);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to fetch grandmasters"
+          err instanceof Error ? err.message : "Failed to fetch grandmasters",
         );
         console.error("Error fetching grandmasters:", err);
       } finally {
@@ -34,6 +36,10 @@ export default function HomePage() {
 
     fetchGrandmasters();
   }, []);
+
+  const handlePlayerClick = (username: string) => {
+    navigate(`/grandmaster/${username}`);
+  };
 
   if (loading) {
     return (
@@ -70,12 +76,21 @@ export default function HomePage() {
         {grandmasters.map((username, index) => (
           <div
             key={index}
+            onClick={() => handlePlayerClick(username)}
             style={{
               padding: "10px",
               border: "1px solid #ddd",
               borderRadius: "5px",
               backgroundColor: "#f9f9f9",
               textAlign: "center",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#e9e9e9";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#f9f9f9";
             }}
           >
             {username}
